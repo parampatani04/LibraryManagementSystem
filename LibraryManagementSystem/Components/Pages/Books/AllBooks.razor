@@ -1,0 +1,32 @@
+﻿@page "/AllBooks"
+
+<style>
+    h1 {
+        text-align: center;
+        color: white;
+        font-size: 35px;
+        font-family: Arial, Times, serif;
+        margin-bottom: 40px;
+    }
+
+    body {
+        background-color: black;
+        color: white;
+    }
+
+    
+</style>
+<h1>All Books</h1>
+
+
+
+@code {
+    <!-- This Razor component represents a page displaying all books in the library management system. It contains a header and potentially a list or table of books. The CancelButton_OnClicked method allows users to navigate back to the books manager page. -->
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+    private void CancelButton_OnClicked()
+    {
+        NavigationManager.NavigateTo("/booksmanager");
+    }
+
+}

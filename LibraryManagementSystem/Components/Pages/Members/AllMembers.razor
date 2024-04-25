@@ -1,0 +1,33 @@
+﻿@page "/AllMembers"
+
+<style>
+    h1 {
+        text-align: center;
+        color: white;
+        font-size: 35px;
+        font-family: Arial, Times, serif;
+        margin-bottom: 40px;
+    }
+
+    body {
+        background-color: black;
+        color: white;
+    }
+
+    
+
+</style>
+<h1>All Members</h1>
+
+
+
+@code {
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+    private void CancelButton_OnClicked()
+    {
+        NavigationManager.NavigateTo("/membersmanager");
+    }
+
+
+}

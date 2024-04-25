@@ -1,0 +1,188 @@
+﻿@page "/addmember"
+
+@using LibraryManagementSystem.Components.Pages.Data;
+<style>
+    h1 {
+        text-align: center;
+        color: white;
+        font-size: 35px;
+        font-family: Arial, Times, serif;
+        margin-bottom: 40px;
+    }
+
+    body {
+        background-color: black;
+        color: white;
+    }
+
+    input {
+        width: 72%;
+        height: 36px;
+        margin-right: 20px;
+    }
+
+    label {
+        width: 200px;
+        font-size: 20px;
+        font-family: Arial Times, serif;
+    }
+
+    .buttondiv {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 50px;
+    }
+
+    .button {
+        background-color: #800080;
+        color: white;
+        width: 20%;
+        height: 50px;
+        border-radius: 5px;
+        font-size: 14px;
+        border: 2px solid BLACK;
+    }
+
+    .flex1 {
+        display: flex;
+        flex-direction: row;
+    }
+
+    #bottom_buttons {
+        text-align: center;
+    }
+
+    .input_radio {
+        width: 10%;
+        height: 5%;
+        margin: 0 0 0 0;
+    }
+
+    .input_textarea {
+        width: 72%;
+    }
+    .button:hover{
+        opacity:0.75;
+    }
+
+    table {
+        border-collapse: collapse;
+        background-color: white;
+        margin: auto;
+        color:black;
+    }
+
+    td, th {
+        border: 1px solid #000;
+        padding: 8px;
+    }
+</style>
+<h1>Add Member</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Member ID </th>
+            <th>Member Name</th>
+            <th>Gender</th>
+            <th>Phone Number</th>
+            <th>Address</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in memberslist)
+        {
+            <tr>
+                <td>@item.GetMemberID()</td>
+                <td>@item.GetMemberName()</td>
+                <td>@item.GetGender()</td>
+                <td>@item.GetPhone_num()</td>
+                <td>@item.GetAddress()</td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+<div class="flex_1">
+    <label>Member Id: </label>
+    <input type="text" @bind="id" />
+
+</div>
+<br>
+<div class="flex_1">
+    <label>Member Name: </label>
+    <input type="text"  @bind="name"/>
+
+</div>
+<br>
+<div class="flex_1">
+    <form>
+        <label>Gender: </label>
+        <input class="input_radio" type="radio" id="male" name="gender" value="Male" @onclick="SetMale" /><label for="male">Male</label>
+        <input class="input_radio" type="radio" id="female" name="gender" value="Female" @onclick="SetFemale" /><label for="female">Female</label>
+    </form>
+</div>
+<br>
+<div class="flex_1">
+    <label>Phone Number: </label>
+    <input type="tel" @bind="phone_num" />
+
+</div>
+<br>
+
+<br>
+<div class="flex_1">
+    <label for="address">Address: </label>
+    <textarea id="address" class="input_textarea" rows="5" @bind="address"></textarea>
+
+</div>
+<br />
+<div id="bottom_buttons">
+    <button class="button " @onclick="SaveMembers">Add</button>
+    <button class="button " @onclick="CancelButton_OnClicked">Cancel</button>
+</div>
+@code {
+    List<MemberDatabaseManager> memberslist = new List<MemberDatabaseManager>();
+    MemberDatabaseManager members = new MemberDatabaseManager();
+    private string id { get; set; }
+    private string name { get; set; }
+    private string gender { get; set; }
+    private string phone_num { get; set; }
+    private string address { get; set; }
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+    private void CancelButton_OnClicked()
+    {
+        NavigationManager.NavigateTo("/membersmanager");
+    }
+    protected override void OnInitialized()
+    {
+        memberslist.Clear();
+        members.DisplayMembers(memberslist);
+    }
+
+    private void SetFemale()
+    {
+        gender = "Female";
+    }
+    private void SetMale()
+    {
+        gender = "Male";
+    }
+    private void SaveMembers()
+    {
+        members.SetMemberID(Convert.ToInt32(id));
+        members.SetMemberName(name);
+        members.SetGender(gender);
+        members.SetPhoneNum(phone_num);
+        members.SetAddress(address);
+        members.AddMember();
+        OnInitialized();
+    }
+   
+    
+
+
+}

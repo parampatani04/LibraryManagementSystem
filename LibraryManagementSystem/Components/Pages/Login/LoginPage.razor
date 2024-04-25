@@ -1,0 +1,124 @@
+﻿@page "/"
+@layout LibraryManagementSystem.Components.Layout.StartupLayout
+@using LibraryManagementSystem.Components.Pages.Data;
+
+<style>
+    h1 {
+        text-align: center;
+        font-size: 60px;
+        font-family: 'Times New Roman', Times, serif;
+        margin-bottom: 60px;
+    }
+
+    h2 {
+        text-align: center;
+        font-size: 30px;
+        font-family: 'Times New Roman', Times, serif;
+        margin-bottom: 20px;
+    }
+
+    body {
+        background-color: #000000;
+        color: white;
+        font-size: 16px;
+    }
+
+    .buttondiv {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 50px;
+        
+    }
+
+    .button {
+        background-color: #800080;
+        color: #FFFFFF;
+        margin-bottom: 20px;
+        width: 150px;
+        height: 60px;
+        border-radius: 10px;
+        font-size: 20px;
+        padding: 16px;
+        border: 2px solid black;
+        margin-right: 30px;
+    }
+
+        .button:hover {
+            opacity: 0.5;
+        }
+
+    .inputfield {
+        display: flex;
+        color: white;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: auto;
+        width: 320px;
+    }
+
+        .inputfield label {
+            width: 100px;
+            margin-right: 10px;
+        }
+
+        .inputfield .textbox {
+            flex: 1;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+</style>
+
+<h1>Library Management</h1>
+<h2> Login Page</h2>
+<div class="inputfield">
+    <label for="customer_id">Username: </label>
+    <input type="text" class="textbox" id="username" @bind = "username" placeholder="Enter Username">
+    <label for="first_name">Password: </label>
+    <input type="password" class="password" id="password" @bind="password" placeholder="Enter password">
+</div>
+
+
+<div class="buttondiv">
+
+    <div><button class="button confirm" @onclick="LoginButton_Clicked">Login</button></div>
+    <div><button class="button cancel">Cancel</button></div>
+</div>
+<div>
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+    <div>@ErrorMessage</div>
+    }
+</div>
+
+@code{
+    // user login and pass 
+    private string ErrorMessage;
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
+    DBConnection db = new DBConnection();
+    private string username { get; set; }
+    private string password { get; set; }
+    private void LoginButton_Clicked()
+    {
+
+        try
+        {
+            if (db.CheckCreds(username, password))
+            {
+                NavigationManager.NavigateTo("/booksmanager");
+            }
+        }
+
+        catch(UnauthorizedAccessException e)
+        {
+            ErrorMessage = e.Message;
+        }
+
+        
+    }
+
+    
+    }

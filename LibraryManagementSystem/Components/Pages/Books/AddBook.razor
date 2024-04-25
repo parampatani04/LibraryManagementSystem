@@ -1,0 +1,188 @@
+﻿@page "/addBook"
+
+@using LibraryManagementSystem.Components.Pages.Data;
+<style>
+    h1 {
+        text-align: center;
+        color: white;
+        font-size: 35px;
+        font-family: Arial, Times, serif;
+        margin-bottom: 40px;
+    }
+
+    body {
+        background-color: black;
+    }
+
+    input {
+        width: 72%;
+        height: 36px;
+        margin-right: 20px;
+    }
+
+    label {
+        color: white;
+        width: 200px;
+        font-size: 20px;
+        font-family: Arial Times, serif;
+    }
+
+    .buttondiv {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 50px;
+    }
+
+    .button {
+        background-color: #800080;
+        color: white;
+        width: 20%;
+        height: 50px;
+        border-radius: 5px;
+        font-size: 14px;
+        border: 2px solid black;
+    }
+
+    .flex1 {
+        display: flex;
+        flex-direction: row;
+    }
+
+    #bottom_buttons {
+        text-align: center;
+    }
+
+    .button:hover {
+        opacity: 0.75;
+    }
+
+    table {
+        border-collapse: collapse;
+        background-color: white;
+        margin: auto;
+        color: black;
+    }
+
+    td, th {
+        border: 1px solid #000;
+        padding: 8px;
+    }
+</style>
+<h1>Add Books</h1>
+<table>
+    <thead>
+        <tr>
+            <th>ISBN</th>
+            <th>Book Title</th>
+            <th>Author</th>
+            <th>Publish Date</th>
+            <th>Publisher Name</th>
+            <th>No of Pages</th>
+            <th>Genre</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in bookslist)
+        {
+            <tr>
+                <td>@item.GetISBN()</td>
+                <td>@item.GetTitle()</td>
+                <td>@item.GetAuthor()</td>
+                <td>@item.GetPublishDate()</td>
+                <td>@item.GetPublisherName()</td>
+                <td>@item.GetPagesnum()</td>
+                <td>@item.GetGenre()</td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+<div class="flex_1">
+    <label>Book ISBN number: </label>
+    <input type="text" @bind="isbn"/>
+
+</div>
+<br>
+<div class="flex_1">
+    <label>Book Title: </label>
+    <input type="text" @bind="title" />
+
+</div>
+<br>
+<div class="flex_1">
+    <label>Book Author: </label>
+    <input type="text" @bind="author" />
+
+</div>
+<br>
+<div class="flex_1">
+    <label>Date Published: </label>
+    <input type="date" @bind="datepublished" />
+
+</div>
+<br>
+<div class="flex_1">
+    <label>Books Publisher: </label>
+    <input type="text" @bind="publishername" />
+
+</div>
+<br>
+<div class="flex_1">
+    <label>No of Pages: </label>
+    <input type="number" @bind="pagesnum" />
+
+</div>
+<br>
+<div class="flex_1">
+    <label>Book Genre: </label>
+    <input type="text" @bind="genre" />
+
+</div>
+<br>
+<br>
+<div id="bottom_buttons">
+    <button class="button " @onclick="SaveBooks">Confirm</button>
+    <button class="button " @onclick="CancelButton_OnClicked">Cancel</button>
+</div>
+@code {
+    <!-- This Razor component represents a page for adding books to a library management system. It includes a form with input fields for ISBN, title, author, publish date, publisher name, number of pages, and genre. Users can input book details and save them to the database. The SaveBooks method is responsible for collecting the input data and saving it through the BooksDBManager class. The CancelButton_OnClicked method allows users to cancel the operation and navigate back to the books manager page. -->
+
+    BooksDBManager dbm = new BooksDBManager();
+    List<BooksDBManager> bookslist = new List<BooksDBManager>();
+    private int isbn { get; set; }
+    private string title { get; set; }
+    private string author { get; set; }
+    private DateOnly datepublished { get; set; }
+    private string publishername { get; set; }
+    private int pagesnum { get; set; }
+    private string genre { get; set; }
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+    protected override void OnInitialized()
+    {
+        bookslist.Clear();
+        dbm.ReturnAllBooks(bookslist);
+    }
+    private void CancelButton_OnClicked()
+    {
+        NavigationManager.NavigateTo("/booksmanager");
+    }
+
+    public void SaveBooks()
+    {
+        dbm.SetISBN(isbn);
+        dbm.SetTitle(title);
+        dbm.SetAuthor(author);
+        dbm.SetPublishDate(datepublished);
+        dbm.SetPublisherName(publishername);
+        dbm.SetPagesnum(pagesnum);
+        dbm.SetGenre(genre);
+        dbm.AddBooks();
+        OnInitialized();
+
+    }
+
+}

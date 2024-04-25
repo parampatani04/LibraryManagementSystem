@@ -1,0 +1,197 @@
+﻿@page "/IssueBooks"
+
+@using LibraryManagementSystem.Components.Pages.Data;
+<style>
+    h1 {
+        text-align: center;
+        color: white;
+        font-size: 35px;
+        font-family: Arial, Times, serif;
+        margin-bottom: 40px;
+    }
+
+    body {
+        background-color: black;
+        color: white;
+    }
+
+    input {
+        width: 72%;
+        height: 36px;
+        margin-right: 20px;
+    }
+
+    label {
+        width: 200px;
+        font-size: 20px;
+        font-family: Arial Times, serif;
+    }
+
+    .buttondiv {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 50px;
+    }
+
+    .button {
+        background-color: #800080;
+        color: white;
+        width: 20%;
+        height: 50px;
+        border-radius: 5px;
+        font-size: 14px;
+        border: 2px solid black;
+    }
+
+    .flex {
+        display: flex;
+    }
+
+
+    #bottom_buttons {
+        text-align: center;
+    }
+    .button:hover{
+        opacity:75%;
+    }
+
+    .input_radio {
+        width: 10%;
+        height: 5%;
+        margin: auto;
+    }
+
+    .input_textarea {
+        width: 75%;
+    }
+
+    .width {
+        width: 75%;
+        height: 38px;
+    }
+
+    table {
+        border-collapse: collapse;
+        background-color: white;
+        margin: auto;
+        color: black;
+    }
+
+    td, th {
+        border: 1px solid #000;
+        padding: 8px;
+    }
+</style>
+<h1>Issue Books</h1>
+<table>
+    <thead>
+        <tr>
+            <th>ISBN </th>
+            <th>Member ID</th>
+            <th>Borrow Date</th>
+            <th>Return Date</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in rentalsList)
+        {
+            <tr>
+                <td>@item.GetRentalISBN()</td>
+                <td>@item.GetRentalMemberID()</td>
+                <td>@item.GetBorrowDate()</td>
+                <td>@item.GetReturnDate()</td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+<div class="flex">
+    
+    <label>Member ID: </label>
+    <select class="width" @bind="member_id">
+        @foreach (var member in memberIdList)
+        {
+            <option value=@member>@member</option>
+        }
+    </select>
+
+</div>
+<br />
+<div class="flex">
+    <label>Books ISBN : </label>
+    <select class="width" @bind="isbn">
+        @foreach(var isbn in isbnList)
+        {
+            <option value=@isbn>@isbn</option>
+        }
+    </select>
+
+</div>
+<br>
+
+
+<br />
+<div class="flex">
+    <label>Borrowed Date : </label>
+    <input type="date" class="width" @bind="borrowdate"/>
+
+</div>
+<br>
+<div class="flex">
+    <label>Return Date : </label>
+    <input type="date" class="width" @bind="returndate"/>
+
+</div>
+<br />
+
+<br />
+<div id="bottom_buttons">
+    <button class="button " @onclick="IssueBook_OnClicked">Confirm</button>
+    <button class="button " @onclick="CancelButton_OnClicked">Cancel</button>
+</div>
+@code {
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+    private void CancelButton_OnClicked()
+    {
+        NavigationManager.NavigateTo("/rentalmanager");
+    }
+    List<int> isbnList = new List<int>();
+    List<int> memberIdList = new List<int>();
+    List<RentalDBManager> rentalsList = new List<RentalDBManager>();
+
+    RentalDBManager rental = new RentalDBManager();
+
+    private int isbn { get; set; }
+    private int member_id { get; set; }
+    private DateOnly borrowdate { get; set; }
+    private DateOnly returndate { get; set; }
+
+    RentalDBManager rentals = new RentalDBManager();
+
+    protected override void OnInitialized()
+    {
+        isbnList.Clear();
+        memberIdList.Clear();
+        rentals.IssueAccessISBN(isbnList);
+        rentals.AccessMemberID(memberIdList);
+        rentals.DisplayRentals(rentalsList);
+    }
+
+    private void IssueBook_OnClicked()
+    {
+        rentals.SetRentalISBN(isbn);
+        rentals.SetRentalMemberID_(member_id);
+        rentals.SetBorrowDate(borrowdate);
+        rentals.SetReturnDate(returndate);
+
+        rentals.IssueBook();
+        isbnList.Remove(isbn);
+        memberIdList.Remove(member_id);
+        OnInitialized();
+    }
+}
