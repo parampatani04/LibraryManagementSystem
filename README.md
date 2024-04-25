@@ -1,0 +1,2 @@
+# OOP2FinalProject
+This project is a Library Management System which aims to manage the rentals and books information on librarian's end. This management system was created using .net maui blazor hybrid framework. The App is connected to a database where the whole data is stored and updated to. It offers variety of functionalities to users such as Managing books, members and also creating a rental. 
